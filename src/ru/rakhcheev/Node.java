@@ -51,9 +51,8 @@ public class Node {
                 this.getParent().getParent().optimization();
                 return;
             }
-            this.swapSide();
         }
-        this.swapSide();
+        this.swap();
     }
 
     private void swapColor(){
@@ -64,76 +63,62 @@ public class Node {
         parent.getRight().setColor(tempColor);
     }
 
-    private void swapSide(){
+    private void swap(){
 
-        if(this.getSide().equals(this.getParent().getSide())){
-            if(this.getSide().equals("Right")){
+        boolean rightSide = this.getSide().equals(this.getParent().getSide());
+        System.out.println(this.value);
+        if(this.getSide().equals("Right")){
+            if(rightSide) {
                 this.getParent().leftSwap();
-                this.getParent().optimization();
-                return;
+
             }
-            this.getParent().rightSwap();
-            this.getParent().optimization();
-            return;
+            else {
+                this.leftSwap();
+                this.swap();
+            }
+        } else {
+            if(rightSide) this.getParent().rightSwap();
+            else {
+                this.rightSwap();
+                this.swap();
+            }
         }
-
-
-        if(this.getSide().equals("Right")) {
-            this.leftSwap();
-            this.getParent().getLeft().swapSide();
-        }
-        else {
-            this.rightSwap();
-            this.getParent().getRight().swapSide();
-        }
-
-
-
     }
 
-    private String getSide(){
-        if(this.getParent().getRight() == this) return "Right";
-        return "Left";
-    }
+
 
     private void rightSwap(){
-        Node parent = this.getParent();
-        Node tempNode = new Node(parent.getValue());
+        Node rightThisTempNode = this.getLeft(); // null?
+        this.setLeft(this.getRight());
+        this.setRight(this.getUncle());
 
-        tempNode.setColor(this.getColor());
-        tempNode.setRight(parent.getRight());
-        if(parent.getRight() != null) parent.getRight().setParent(tempNode);
-        tempNode.setLeft(this.getRight());
-        tempNode.setParent(parent);
-        if(this.getRight() != null) this.getRight().setParent(tempNode);
+        Node parentNode = this.getParent();
+        parentNode.setLeft(rightThisTempNode);
+        parentNode.setRight(this);
 
-        parent.setLeft(this.getLeft());
-        if(this.getLeft() != null) this.getLeft().setParent(parent);
-        parent.setRight(tempNode);
-        parent.setValue(this.getValue());
-        //tempNode.afterSwapCheck();
+        int value = this.getValue();
+
+        this.setValue(parentNode.getValue());
+        parentNode.setValue(value);
     }
 
     private void leftSwap(){
-        Node parent = this.getParent();
-        Node tempNode = new Node(parent.getValue());
 
-        tempNode.setColor(this.getColor());
-        tempNode.setLeft(parent.getLeft());
-        if(parent.getLeft() != null) parent.getLeft().setParent(tempNode);
-        tempNode.setRight(this.getLeft());
-        tempNode.setParent(parent);
-        if(this.getLeft() != null) this.getLeft().setParent(tempNode);
+        Node rightThisTempNode = this.getRight(); // null?
+        this.setRight(this.getLeft());
+        this.setLeft(this.getUncle());
 
-        parent.setRight(this.getRight());
-        if(this.getRight() != null) this.getRight().setParent(parent);
-        parent.setLeft(tempNode);
-        parent.setValue(this.getValue());
-        //tempNode.afterSwapCheck();
+        Node parentNode = this.getParent();
+        parentNode.setRight(rightThisTempNode);
+        parentNode.setLeft(this);
+
+        int value = this.getValue();
+
+        this.setValue(parentNode.getValue());
+        parentNode.setValue(value);
     }
 
     private void afterSwapCheck(){
-
         if(this.getLeft() != null)
             if(this.getLeft().getColor() == this.getColor()) this.getLeft().optimization();
 
@@ -146,6 +131,11 @@ public class Node {
         if (parentNode == null) return null;
         if (parentNode.getLeft() == this) return parentNode.getRight();
         return parentNode.getLeft();
+    }
+
+    private String getSide(){
+        if(this.getParent().getRight() == this) return "Right";
+        return "Left";
     }
 
 
@@ -173,6 +163,7 @@ public class Node {
 
     public void setLeft(Node left) {
         this.left = left;
+        if(left != null) left.setParent(this);
     }
 
     public Node getRight() {
@@ -181,6 +172,7 @@ public class Node {
 
     public void setRight(Node right) {
         this.right = right;
+        if(right != null) right.setParent(this);
     }
 
     public Node getParent() {

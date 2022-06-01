@@ -3,7 +3,9 @@ package ru.rakhcheev;
 public class Main {
 
     public static void main(String[] args) {
+
         Node node = new Node(33);
+
         node.add(48);
         node.add(13);
         node.add(1);
@@ -14,8 +16,10 @@ public class Main {
         node.add(36);
         node.add(30);
         node.add(27);
-        /*node.add(8);*/
-        // 15 46 10
+        node.add(8);
+        node.add(15);
+        node.add(46);
+        node.add(10);
         System.out.println(node);
 
 
